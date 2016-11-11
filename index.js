@@ -39,7 +39,7 @@ function makeCircle() {
   let x = Math.floor(Math.random() * (two.width - radius)) + radius;
   let y = Math.floor(Math.random() * (two.height - radius)) + radius;
   let circle = two.makeCircle(x, y, radius);
-  circle.fill = '#FF8000';
+  circle.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
   group.add(circle);
 }
 
@@ -49,6 +49,6 @@ function makeRectangle() {
   let x = Math.floor(Math.random() * (two.width - width)) + width;
   let y = Math.floor(Math.random() * (two.height - height)) + height;
   let rect = two.makeRectangle(x, y, width, height);
-  rect.fill = '#FF8000';
+  rect.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
   group.add(rect);
 }
