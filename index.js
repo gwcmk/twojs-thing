@@ -8,7 +8,6 @@ var commands = {
 document.addEventListener("DOMContentLoaded", function(event) {
   var elem = document.getElementById('container');
   two = new Two({ fullscreen: true }).appendTo(elem);
-  group = two.makeGroup();
 
   two.bind('update', frameCount => {
     if (currentCommand in commands) {
@@ -40,7 +39,6 @@ function makeCircle() {
   let y = Math.floor(Math.random() * (two.height - radius)) + radius;
   let circle = two.makeCircle(x, y, radius);
   circle.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
-  group.add(circle);
 }
 
 function makeRectangle() {
@@ -50,5 +48,4 @@ function makeRectangle() {
   let y = Math.floor(Math.random() * (two.height - height)) + height;
   let rect = two.makeRectangle(x, y, width, height);
   rect.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
-  group.add(rect);
 }
