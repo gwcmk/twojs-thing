@@ -6,6 +6,7 @@ var commands = {
   'SQUARE': makeSquare,
   'ROTATE': rotate,
   'SQUISH': squish,
+  'CLEAR': clear,
 };
 var animationState = {
   'ROTATE': {
@@ -22,8 +23,6 @@ let squished = false;
 document.addEventListener("DOMContentLoaded", function(event) {
   let elem = document.getElementById('container');
   two = new Two({ fullscreen: true }).appendTo(elem);
-
-  reset();
 
   two.bind('update', frameCount => {
     if (currentCommand in commands) {
@@ -55,6 +54,35 @@ function makeCircle() {
   const y = Math.floor(Math.random() * (two.height - 2 * radius)) + radius;
   let circle = two.makeCircle(x, y, radius);
   circle.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
+
+  const vertices = circle.vertices;
+
+  for (let i = 0; i < vertices.length; i += 1) {
+    const v = vertices[i];
+    const percent = (i + 1) / vertices.length;
+    const theta = percent * Math.PI * 2;
+    const radius = Math.random() * two.height / 3 + two.height / 6;
+
+    const vNext = [
+      two.height / 3 * Math.cos(theta),
+      two.height / 3 * Math.sin(theta),
+    ];
+    v.set(...vNext);
+
+    const dest = [
+      radius * Math.cos(theta),
+      radius * Math.sin(theta),
+    ];
+    v.destination = new Two.Vector(...dest);
+
+    v.step = Math.sqrt(Math.random()) + 2;
+  }
+
+  two.scene.noStroke();
+}
+
+function clear () {
+  two.clear();
 }
 
 function makeRectangle() {
@@ -64,6 +92,8 @@ function makeRectangle() {
   const y = Math.floor(Math.random() * (two.height - 2 * height)) + height;
   let rect = two.makeRectangle(x, y, width, height);
   rect.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
+
+  two.scene.noStroke();
 }
 
 function makeSquare() {
@@ -72,6 +102,9 @@ function makeSquare() {
   const y = Math.floor(Math.random() * (two.height - 2 * max)) + max;
   let rect = two.makeRectangle(x, y, max, max);
   rect.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
+
+
+  two.scene.noStroke();
 }
 
 function rotate() {
@@ -84,49 +117,48 @@ function rotate() {
   }
 }
 
-function reset () {
-  for (const child of two.scene.children) {
-    // Shift the blob slightly
-    // const translation = [
-    //   two.width / 2,
-    //   two.height / 2
-    // ];
-    // child.translation.set(...translation);
+// function reset () {
+//   for (const child of two.scene.children) {
+//     // Shift the blob slightly
+//     // const translation = [
+//     //   two.width / 2,
+//     //   two.height / 2
+//     // ];
+//     // child.translation.set(...translation);
 
-    // "Unsquish"
-    squished = false;
+//     // "Unsquish"
+//     squished = false;
 
-    const vertices = child.vertices;
+//     const vertices = child.vertices;
 
-    for (let i = 0; i < vertices.length; i += 1) {
-      const v = vertices[i];
-      const percent = (i + 1) / vertices.length;
-      const theta = percent * Math.PI * 2;
-      const radius = Math.random() * two.height / 3 + two.height / 6;
+//     for (let i = 0; i < vertices.length; i += 1) {
+//       const v = vertices[i];
+//       const percent = (i + 1) / vertices.length;
+//       const theta = percent * Math.PI * 2;
+//       const radius = Math.random() * two.height / 5 + two.height / 12;
 
-      const vNext = [
-        two.height / 3 * Math.cos(theta),
-        two.height / 3 * Math.sin(theta),
-      ];
-      v.set(...vNext);
+//       const vNext = [
+//         two.height / 3 * Math.cos(theta),
+//         two.height / 3 * Math.sin(theta),
+//       ];
+//       v.set(...vNext);
 
+//       const dest = [
+//         radius * Math.cos(theta),
+//         radius * Math.sin(theta),
+//       ];
+//       v.destination = new Two.Vector(...dest);
 
-      const dest = [
-        radius * Math.cos(theta),
-        radius * Math.sin(theta),
-      ];
-      v.destination = new Two.Vector(...dest);
-
-      v.step = Math.sqrt(Math.random()) + 2;
-    }
-  }
-}
+//       v.step = Math.sqrt(Math.random()) + 2;
+//     }
+//   }
+// }
 
 function squish () {
-  // Squish if it isn't already
-  if (!squished) {
-    for (const child of two.scene.children) {
-      const vertices = child.vertices;
+  for (const child of two.scene.children) {
+    const vertices = child.vertices;
+
+    if (vertices.length > 4) {
       for (const v of vertices) {
         const dest = v.destination;
 
@@ -135,13 +167,30 @@ function squish () {
           break;
         }
 
-        v.x += (dest.x - v.x) * 0.125;
-        v.y += (dest.y - v.y) * 0.125;
+        v.x += (dest.x - v.x) * 0.5;
+        v.y += (dest.y - v.y) * 0.5;
       }
     }
-
-    return;
   }
+  // Squish if it isn't already
+  // if (!squished) {
+  //   for (const child of two.scene.children) {
+  //     const vertices = child.vertices;
+  //     for (const v of vertices) {
+  //       const dest = v.destination;
+
+  //       if (v.equals(dest)) {
+  //         squished = true;
+  //         break;
+  //       }
+
+  //       v.x += (dest.x - v.x) * 0.125;
+  //       v.y += (dest.y - v.y) * 0.125;
+  //     }
+  //   }
+
+  //   return;
+  // }
 
   // Push it off the screen
 //   let outside = true;
