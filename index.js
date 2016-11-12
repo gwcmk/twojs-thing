@@ -6,10 +6,6 @@ var commands = {
   'SQUARE': makeSquare,
   'ROTATE': rotate
 }
-const initialAnimationState = {
-  inProgress: false,
-  startFrame: 0
-}
 var animationState = {
   'ROTATE': {
     inProgress: false,
