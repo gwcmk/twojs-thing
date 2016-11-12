@@ -82,6 +82,8 @@ function rotate(currentFrame) {
     state.inProgress = true;
     state.startFrame = currentFrame;
   }
+  console.log(two.scene.scale);
+  two.scene.scale -= (1 / state.duration) * 0.3;
   two.scene.rotation += (1 / state.duration) * Math.PI;
 
   if (two.scene.rotation >= 2 * Math.PI) {
