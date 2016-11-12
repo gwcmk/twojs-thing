@@ -1,5 +1,6 @@
 var two, group;
 var currentCommand = '';
+var lastCommand = '';
 var commands = {
   'CIRCLE': makeCircle,
   'RECTANGLE': makeRectangle,
@@ -18,6 +19,24 @@ var animationState = {
 };
 Two.Resolution = 32;
 
+const COLORS = [
+  '#33D7E0',
+  '#8DC400',
+  '#BDC400',
+  '#FDD532',
+  '#FCA132',
+  '#F69434',
+  '#33ABE0',
+  '#E92530',
+  '#E8255F',
+  '#33D7E0',
+  '#F46333',
+  '#C516CE',
+  '#DB237F',
+  '#DB237F',
+  '#DB237F',
+];
+
 let squished = false;
 
 document.addEventListener("DOMContentLoaded", function(event) {
@@ -27,8 +46,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
   two.bind('update', frameCount => {
     if (currentCommand in commands) {
       commands[currentCommand](frameCount);
+      const listItem = document.createElement('li');
+      listItem.innerHTML = currentCommand;
+
       currentCommand = '';
       document.getElementById('command').innerHTML = currentCommand;
+
+      const history = document.getElementById('command-history');
+      history.insertBefore(listItem, history.firstChild);
     }
 
     // continue each animation in progress
@@ -44,14 +69,22 @@ document.onkeydown = processInput;
 
 function processInput(event) {
   event = event || window.event;
-  if (event.keyCode === 8) {
-    // backspace
-    currentCommand = currentCommand.slice(0, -1);
-  } else {
+  const key = event.keyCode;
+
+  // Handle alphabetic keypresses
+  if (key >= 65 && key <= 90) {
     // TODO: make sure that this is a letter, not a symbol
     let currentCharacter = String.fromCharCode(event.which);
     currentCommand += currentCharacter;
+  } else if (key === 8) {
+    // Backspace
+    currentCommand = currentCommand.slice(0, -1);
+  } else {
+    // Ignore all others
+    event.stopPropagation();
+    return false;
   }
+
   document.getElementById('command').innerHTML = currentCommand;
 }
 
@@ -60,7 +93,8 @@ function makeCircle(currentFrame) {
   const x = Math.floor(Math.random() * (two.width - 2 * radius)) + radius;
   const y = Math.floor(Math.random() * (two.height - 2 * radius)) + radius;
   let circle = two.makeCircle(x, y, radius);
-  circle.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
+  // circle.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
+  circle.fill = COLORS[Math.round(COLORS.length * Math.random())];
 
   const vertices = circle.vertices;
 
@@ -90,6 +124,7 @@ function makeCircle(currentFrame) {
 
 function clear () {
   two.clear();
+  document.getElementById('command-history').innerHTML = '';
 }
 
 function makeRectangle(currentFrame) {
@@ -98,7 +133,9 @@ function makeRectangle(currentFrame) {
   const x = Math.floor(Math.random() * (two.width - 2 * width)) + width;
   const y = Math.floor(Math.random() * (two.height - 2 * height)) + height;
   let rect = two.makeRectangle(x, y, width, height);
-  rect.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
+  // rect.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
+  rect.fill = COLORS[Math.round(COLORS.length * Math.random())];
+
 
   two.scene.noStroke();
 }
@@ -108,8 +145,8 @@ function makeSquare(currentFrame) {
   const x = Math.floor(Math.random() * (two.width - 2 * max)) + max;
   const y = Math.floor(Math.random() * (two.height - 2 * max)) + max;
   let rect = two.makeRectangle(x, y, max, max);
-  rect.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
-
+  // rect.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
+  rect.fill = COLORS[Math.round(COLORS.length * Math.random())];
 
   two.scene.noStroke();
 }

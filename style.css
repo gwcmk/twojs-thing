@@ -1,3 +1,7 @@
+body {
+  font-family: 'Inconsolata', 'PT Mono', 'Courier New', monospace;
+}
+
 #container {
 	width: 100vw;
 	height: 100vh;
@@ -5,7 +9,6 @@
 }
 
 h1 {
-	font-family: 'Inconsolata', 'PT Mono', 'Courier New', monospace;
   position: absolute;
   top: 50%;
   left: 30%;
@@ -19,4 +22,12 @@ h1:before {
 
 h1:after {
   content: '_';
+}
+
+#command-history {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  list-style-type: none;
+  color: grey;
 }
