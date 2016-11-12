@@ -81,13 +81,20 @@ function rotate(currentFrame) {
     // first call
     state.inProgress = true;
     state.startFrame = currentFrame;
+    state.angle = 0;
   }
-  console.log(two.scene.scale);
-  two.scene.scale -= (1 / state.duration) * 0.3;
-  two.scene.rotation += (1 / state.duration) * Math.PI;
+  state.angle += (1 / state.duration) * Math.PI;
+  two.scene.children.forEach(c => {
+    c.rotation += (1 / state.duration) * Math.PI;
+    let percentage = ((currentFrame - state.startFrame) / state.duration);
+    c.scale = Math.pow(percentage, 2) * (percentage - 2) + 1;
+  });
 
-  if (two.scene.rotation >= 2 * Math.PI) {
+  if (state.angle >= 2 * Math.PI) {
     state.inProgress = false;
-    two.scene.rotation = 0;
+    two.scene.children.forEach(c => {
+      c.rotation = 0;
+      c.scale = 1;
+    });
   }
 }
