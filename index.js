@@ -44,7 +44,7 @@ function processInput(event) {
 }
 
 function makeCircle() {
-  const radius = Math.floor(Math.random() * (100 - 50)) + 50;
+  const radius = Math.floor(Math.random() * (two.height / 2 - 10)) + 10;
   const x = Math.floor(Math.random() * (two.width - 2 * radius)) + radius;
   const y = Math.floor(Math.random() * (two.height - 2 * radius)) + radius;
   let circle = two.makeCircle(x, y, radius);
