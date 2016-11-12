@@ -2,11 +2,25 @@ var two, group;
 var currentCommand = '';
 var commands = {
   'CIRCLE': makeCircle,
-  'RECTANGLE': makeRectangle
+  'RECTANGLE': makeRectangle,
+  'SQUARE': makeSquare,
+  'ROTATE': rotate
+}
+const initialAnimationState = {
+  inProgress: false,
+  startFrame: 0
+}
+var animationState = {
+  'ROTATE': {
+    inProgress: false,
+    startFrame: 0,
+    duration: 300,
+    angle: 0
+  }
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
-  var elem = document.getElementById('container');
+  let elem = document.getElementById('container');
   two = new Two({ fullscreen: true }).appendTo(elem);
 
   two.bind('update', frameCount => {
@@ -34,18 +48,36 @@ function processInput(event) {
 }
 
 function makeCircle() {
-  let radius = Math.floor(Math.random() * (100 - 50)) + 50;
-  let x = Math.floor(Math.random() * (two.width - radius)) + radius;
-  let y = Math.floor(Math.random() * (two.height - radius)) + radius;
+  const radius = Math.floor(Math.random() * (100 - 50)) + 50;
+  const x = Math.floor(Math.random() * (two.width - 2 * radius)) + radius;
+  const y = Math.floor(Math.random() * (two.height - 2 * radius)) + radius;
   let circle = two.makeCircle(x, y, radius);
   circle.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
 }
 
 function makeRectangle() {
-  let width = Math.floor(Math.random() * (two.width - 10)) + 10;
-  let height = Math.floor(Math.random() * (two.height - 10)) + 10;
-  let x = Math.floor(Math.random() * (two.width - width)) + width;
-  let y = Math.floor(Math.random() * (two.height - height)) + height;
+  const width = Math.floor(Math.random() * (two.width - 10)) + 10;
+  const height = Math.floor(Math.random() * (two.height - 10)) + 10;
+  const x = Math.floor(Math.random() * (two.width - 2 * width)) + width;
+  const y = Math.floor(Math.random() * (two.height - 2 * height)) + height;
   let rect = two.makeRectangle(x, y, width, height);
   rect.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
+}
+
+function makeSquare() {
+  const max = Math.floor(Math.random() * (two.height - 10)) + 10;
+  const x = Math.floor(Math.random() * (two.width - 2 * max)) + max;
+  const y = Math.floor(Math.random() * (two.height - 2 * max)) + max;
+  let rect = two.makeRectangle(x, y, max, max);
+  rect.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
+}
+
+function rotate() {
+  let state = animationState['ROTATE'];
+  if (state.angle === 2 * Math.PI) {
+    state.inProgress = false;
+  }
+  if (state.inProgress) {
+    group.rotation += t * 4 * Math.PI;
+  }
 }
