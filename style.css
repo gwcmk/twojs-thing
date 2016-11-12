@@ -1,8 +1,22 @@
 #container {
 	width: 100vw;
 	height: 100vh;
+  z-index: -999999;
 }
 
 h1 {
-	font-family: 'Helvetica Neue';
+	font-family: 'Inconsolata', 'PT Mono', 'Courier New', monospace;
+  position: absolute;
+  top: 50%;
+  left: 30%;
+  transform: translateY(-50%);
+}
+
+h1:before {
+  content: '>';
+  padding-right: 10px;
+}
+
+h1:after {
+  content: '_';
 }
