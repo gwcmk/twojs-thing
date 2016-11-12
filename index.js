@@ -10,7 +10,7 @@ var animationState = {
   'ROTATE': {
     inProgress: false,
     startFrame: 0,
-    duration: 120,
+    duration: 60,
     angle: 0
   }
 }
@@ -82,8 +82,10 @@ function rotate(currentFrame) {
     state.inProgress = true;
     state.startFrame = currentFrame;
   }
+  two.scene.rotation += (1 / state.duration) * Math.PI;
+
   if (two.scene.rotation >= 2 * Math.PI) {
     state.inProgress = false;
+    two.scene.rotation = 0;
   }
-  two.scene.rotation += (1 / state.duration) * Math.PI;
 }
