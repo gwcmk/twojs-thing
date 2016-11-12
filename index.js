@@ -10,7 +10,7 @@ var animationState = {
   'ROTATE': {
     inProgress: false,
     startFrame: 0,
-    duration: 300,
+    duration: 120,
     angle: 0
   }
 }
@@ -21,9 +21,16 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
   two.bind('update', frameCount => {
     if (currentCommand in commands) {
-      commands[currentCommand]();
+      commands[currentCommand](frameCount);
       currentCommand = '';
       document.getElementById('command').innerHTML = currentCommand;
+    }
+
+    // continue each animation in progress
+    for (command in animationState) {
+      if (animationState[command].inProgress) {
+        commands[command](frameCount);
+      }
     }
   }).play();
 });
@@ -43,7 +50,7 @@ function processInput(event) {
   document.getElementById('command').innerHTML = currentCommand;
 }
 
-function makeCircle() {
+function makeCircle(currentFrame) {
   const radius = Math.floor(Math.random() * (two.height / 2 - 10)) + 10;
   const x = Math.floor(Math.random() * (two.width - 2 * radius)) + radius;
   const y = Math.floor(Math.random() * (two.height - 2 * radius)) + radius;
@@ -51,7 +58,7 @@ function makeCircle() {
   circle.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
 }
 
-function makeRectangle() {
+function makeRectangle(currentFrame) {
   const width = Math.floor(Math.random() * (two.width - 10)) + 10;
   const height = Math.floor(Math.random() * (two.height - 10)) + 10;
   const x = Math.floor(Math.random() * (two.width - 2 * width)) + width;
@@ -60,7 +67,7 @@ function makeRectangle() {
   rect.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
 }
 
-function makeSquare() {
+function makeSquare(currentFrame) {
   const max = Math.floor(Math.random() * (two.height - 10)) + 10;
   const x = Math.floor(Math.random() * (two.width - 2 * max)) + max;
   const y = Math.floor(Math.random() * (two.height - 2 * max)) + max;
@@ -68,12 +75,15 @@ function makeSquare() {
   rect.fill = `#${(Math.random()*0xFFFFFF<<0).toString(16)}`;
 }
 
-function rotate() {
+function rotate(currentFrame) {
   let state = animationState['ROTATE'];
-  if (state.angle === 2 * Math.PI) {
+  if (!state.inProgress) {
+    // first call
+    state.inProgress = true;
+    state.startFrame = currentFrame;
+  }
+  if (two.scene.rotation >= 2 * Math.PI) {
     state.inProgress = false;
   }
-  if (state.inProgress) {
-    group.rotation += t * 4 * Math.PI;
-  }
+  two.scene.rotation += (1 / state.duration) * Math.PI;
 }
